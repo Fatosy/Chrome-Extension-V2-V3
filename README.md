@@ -12,6 +12,7 @@ v2 : some example code by chrome extension v2.
   - deskNotify : 桌面通知
   - cssInject : css注入
   - showExt : 在指定的页面中显示插件
+  - addBtn : 在指定页面注入JS新增按钮
 
 v3 : some example code by chrome extension v3.
   - autoSearch : 百度自动搜索
@@ -22,5 +23,6 @@ v3 : some example code by chrome extension v3.
   - deskNotify : 桌面通知
   - cssInject : css注入
   - fetch_cors : fetch跨域请求数据与插件内部数据通信封装
-  - inject : 静态注入JS
+  - addBtn : 在指定页面注入JS新增按钮
   - showExt : 在指定的页面中显示插件
+  
