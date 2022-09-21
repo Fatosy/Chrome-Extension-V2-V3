@@ -1,0 +1,20 @@
+{
+    "manifest_version":2,
+    "name":"Badge Status",
+    "version":"1.0",
+    "description":"Badge Status",
+    "author":"Fatosy",
+    "icons":{
+        "16":"img/icon16.png",
+        "48":"img/icon48.png",
+        "128":"img/icon128.png"
+    },
+    "browser_action":{
+        "default_icon":"img/icon16.png",
+        "default_title":"Badge Status",
+        "default_popup":"popup.html"
+    },
+    "background":{
+        "page":"back.html"
+    }
+}
