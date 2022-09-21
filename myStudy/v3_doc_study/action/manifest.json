@@ -1,0 +1,23 @@
+{
+    "manifest_version":3,
+    "name":"action",
+    "version":"1.0",
+    "description":"action",
+    "author":"Fatosy",
+    "icons":{
+        "16":"img/icon16.png",
+        "48":"img/icon48.png",
+        "128":"img/icon128.png"
+    },
+    "action":{
+        "default_icon":"img/icon16.png",
+        "default_title":"action"
+    },
+    "permissions": [
+        "activeTab", 
+        "scripting"
+    ],
+    "background":{
+        "service_worker":"back.js"
+    }
+}
