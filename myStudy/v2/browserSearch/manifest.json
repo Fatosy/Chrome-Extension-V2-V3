@@ -1,0 +1,30 @@
+{
+    "manifest_version":2,
+    "name":"Browser Search",
+    "version":"1.0",
+    "description":"Browser Search",
+    "author":"Fatosy",
+    "icons":{
+        "16":"img/icon16.png",
+        "48":"img/icon48.png",
+        "128":"img/icon128.png"
+    },
+    "browser_action":{
+        "default_icon":"img/icon16.png",
+        "default_title":"Browser Search",
+        "default_popup":"popup.html"
+    },
+    "background":{
+        "page":"back.html"
+    },
+    "permissions":[
+        "contextMenus",
+        "tabs",
+        "*://*/*",
+        "http://*/*",
+        "https://*/*"
+    ],
+    "omnibox":{
+        "keyword":"baidu"
+    }
+}
