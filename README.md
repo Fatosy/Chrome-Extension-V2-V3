@@ -35,10 +35,9 @@ v3 : some example code by chrome extension v3.
   | changeLetter | 改变页面按钮文字、方法|
   | webScroll | 页面滚动|
   | fetch_cors | fetch跨域请求数据与插件内部数据通信封装|
-<<<<<<< HEAD
-<<<<<<< HEAD
-  
-=======
->>>>>>> b4528e708348f68268664d32cca2ac94f3bed142
-=======
->>>>>>> fbb818600c1cb81fd021517e5561680afeae3d2d
+
+v3_doc_study : some example code about chrome extension v3 from https://developer.chrome.com/docs/extensions/reference/
+
+  | 目录  | 代码内容 |
+  | :----:  | :----: |
+  | action | 动作 |
