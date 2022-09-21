@@ -1,0 +1,76 @@
+Git 命令
+1. git init                   	                                        初始化
+2. git status		                                                    查看文件版本状态
+3. git add xxx.py		                                                添加版本控制
+4. git add .  		                                                    添加所有文件版本控制
+
+5.个人信息配置
+5-1. git config --global user.email "you@example.com"                   
+5-2. git config --global user.name "your Name"
+
+6. git commit -m '描述信息'	                                            生成版本
+7. git log			                                                    查看版本记录
+8. git reset --hard 版本号	                                            回滚版本
+9. git reflog 		                                                    查看历史回滚记录
+10. git branch                                                          查看当前所在分支
+11. git branch ***                                                      创建新分支
+12. git checkout ***                                                    切换新分支  
+13. git merge ***                                                       合并分支(要先切换到master进行合并)
+14. git branch -d ***                                                   删除分支
+
+github命令
+1. github url : https://github.com/Fatosy/GitTest.git
+2. git remote add GitTest https://github.com/Fatosy/GitTest.git         在本地添加一个名为GitTest的github仓库链接
+3. git branch (-M) master/dev/bug                                         在本地切换分支
+4. git push (-u) GitTest master/dev/bug                                   默认把本地分支代码推送上去GitTest中（日常可以去除- u）
+5. git clone https://github.com/Fatosy/GitTest.git                      从github上克隆代码到本地
+6. git pull master/dev/bug                                              从仓库把分支代码下载到本地
+6-1：git pull GitTest master/dev/bug == (git fetch master/dev/bug && git merge master/dev/bug)  git pull 等同于 git fetch 加上 git merge
+6-2: git fetch master/dev/bug                                           把代码从仓库拉到本地
+7. git rebase -i HEAD-3/版本号                                          Head-n 会把从最新的到往上N个版本的提交记录合一，版本号则是把从版本号开始到最新一次提交的提交记录合一
+7-1. 会出现一个文本编辑，最新的写pick,其他要合并到pick版本的写s  或者 用 & 合并分支简化记录
+8. git log --graph                                                      提交记录图形化
+9. git log --graph --pretty=format:"%h %s"                              提交记录简洁化图形化
+10. git tag -a 'v1' -m '第一个版本'                                     公司用的版本管理
+11. git push GitTest tags                                               公司发布版本
+12. git clone -b v2 地址                                                员工同步代码
+
+beyond Compare 4 与 Git 结合快速解决冲突
+一、在git中配置
+1. git config --global merge.tool bc4
+2. git config --global mergetool.bc4.cmd "\"D:\\software\\bc4\\BeyondCompare4\\BComp.exe\" \"\$LOCAL\" \"\$REMOTE\" \"\$BASE\" \"\$MERGED\""
+3. git config --global mergetool.bc4.trustExitCode true
+4. git config --global mergetool.keepBackup false
+5. git config --global --edit                                           可以进入vim编辑全局配置文件删除错误配置信息
+
+二、使用
+git mergetool
+
+
+免密登录
+一、通过URL
+原来的地址： https://github.com/Fatosy/GitTest.git
+修改的地址： https://用户名:密码@github.com/Fatosy/GitTest.git
+1. git remote add GitTest https://用户名:密码@github.com/Fatosy/GitTest.git
+2. git push GitTest master/dev/bug
+
+二、ssh实现
+1. 生产公钥和私钥(默认放在 ~/.ssh 中，id_rsa.pub 是公钥，id_rsa是私钥)
+    在cmd输入命令：ssh=keygen
+2. 拷贝公钥内容，设置到github中
+3. 在本地配置ssh地址
+    git remote add GitTest git@github.com/Fatosy/GitTest.git
+4. git push GitTest master/dev/bug
+
+三、git管理凭证
+
+
+gitignore忽略文件（让git不再管理当前目录下的某些文件）
+
+git/gitlab做任务管理
+1. issues
+2. wiki
+
+
+
+
