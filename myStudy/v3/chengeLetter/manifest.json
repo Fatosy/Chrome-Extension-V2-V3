@@ -1,0 +1,31 @@
+{
+    "manifest_version":3,
+    "name":"Change Letter",
+    "version":"1.0",
+    "description":"Change Letter",
+    "author":"Fatosy",
+    "icons":{
+        "16":"img/icon16.png",
+        "48":"img/icon48.png",
+        "128":"img/icon128.png"
+    },
+    "action":{
+        "default_icon":"img/icon16.png",
+        "default_title":"Change Letter",
+        "default_popup":"popup.html"
+    },
+    "background":{
+        "service_worker":"back.js",
+        "type":"module"
+    },
+    "permissions":[
+        "tabs"
+    ],
+    "content_scripts":[
+        {
+            "matches":["<all_urls>"],
+            "js":["jquery-3.6.1.js","js/inject.js"],
+            "run_at":"document_idle"
+        }
+    ]
+}
