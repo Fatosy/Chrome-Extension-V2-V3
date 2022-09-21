@@ -4,6 +4,9 @@ My study code for chrome-extension from v2 to v3.
 # Catalogue
 
 v2 : some example code by chrome extension v2.
+| 左对齐  | 居中对齐 |
+| :----:  | :----: |
+| autoSearch  | 百度自动搜索 |
   - autoSearch : 百度自动搜索
   - openWeb : 打开新标签页自动跳转百度
   - contextMenu : 添加右键菜单功能、子菜单功能、菜单功能显示限制
