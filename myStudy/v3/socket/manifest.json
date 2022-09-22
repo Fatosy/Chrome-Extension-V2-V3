@@ -1,0 +1,29 @@
+{
+    "manifest_version":3,
+    "name":"Web Socket",
+    "version":"1.0",
+    "description":"Web Socket",
+    "author":"Fatosy",
+    "icons":{
+        "16":"img/icon16.png",
+        "48":"img/icon48.png",
+        "128":"img/icon128.png"
+    },
+    "action":{
+        "default_icon":"img/icon16.png",
+        "default_title":"Web Socket"
+    },
+    "background":{
+        "service_worker":"service_worker.js"
+    },
+    "permissions":[
+        "tabs"
+    ],
+    "content_scripts":[
+        {
+            "matches":["<all_urls>"],
+            "js":["js/jquery-3.6.1.js","js/content.js"],
+            "run_at":"document_idle"
+        }
+    ]
+}
