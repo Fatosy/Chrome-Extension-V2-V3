@@ -1,0 +1,38 @@
+{
+    "manifest_version":3,
+    "name":"Web Socket",
+    "version":"1.0",
+    "description":"Web Socket",
+    "author":"Fatosy",
+    "icons":{
+        "16":"img/icon16.png",
+        "48":"img/icon48.png",
+        "128":"img/icon128.png"
+    },
+    "action":{
+        "default_icon":"img/icon16.png",
+        "default_title":"Web Socket",
+        "default_popup":"./html/popup.html"
+    },
+    "background":{
+        "service_worker":"service_worker.js",
+        "type": "module"
+    },
+    "permissions":[
+        "tabs",
+        "scripting"
+        
+
+    ],
+    "host_permissions":[
+        "http://*.baidu.com//*",
+        "https://*.baidu.com//*"
+    ],
+    "content_scripts":[
+        {
+            "matches":["*://*.baidu.com//*"],
+            "js":["js/jquery-3.6.1.js","js/content.js"],
+            "run_at":"document_idle"
+        }
+    ]
+}

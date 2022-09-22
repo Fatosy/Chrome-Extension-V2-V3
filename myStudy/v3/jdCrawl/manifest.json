@@ -1,0 +1,49 @@
+{
+    "manifest_version":3,
+    "name":"JD Crawl",
+    "version":"1.0",
+    "description":"JD Crawl",
+    "author":"Fatosy",
+    "icons":{
+        "16":"img/icon16.png",
+        "48":"img/icon48.png",
+        "128":"img/icon128.png"
+    },
+    "action":{
+        "default_icon":"img/icon16.png",
+        "default_title":"JD Crawl",
+        "default_popup":"html/popup.html"
+    },
+    "background":{
+        "service_worker":"service_worker.js",
+        "type": "module"
+    },
+    "permissions":[
+        "tabs",
+        "scripting"
+    ],
+    "content_scripts":[
+        {
+            "matches":[
+                "*://*.jd.com/*",
+                "*://jd.com/*"
+            ],
+            "js":["js/jquery-3.6.1.js","js/global.js"],
+            "run_at":"document_idle"
+        },
+        {
+            "matches":[
+                "*://item.jd.com/*"
+            ],
+            "js":["js/jquery-3.6.1.js","js/JD/item.js"],
+            "run_at":"document_idle"
+        },
+        {
+            "matches":[
+                "*://mall.jd.com/*"
+            ],
+            "js":["js/jquery-3.6.1.js","js/JD/shop.js"],
+            "run_at":"document_idle"
+        }
+    ]
+}
