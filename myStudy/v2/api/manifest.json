@@ -1,5 +1,5 @@
 {
-    "manifest_version":3,
+    "manifest_version":2,
     "name":"Web Socket",
     "version":"1.0",
     "description":"Web Socket",
@@ -9,12 +9,12 @@
         "48":"img/icon48.png",
         "128":"img/icon128.png"
     },
-    "action":{
+    "browser_action":{
         "default_icon":"img/icon16.png",
         "default_title":"Web Socket"
     },
     "background":{
-        "service_worker":"service_worker.js"
+        "page":"service_worker.html"
     },
     "permissions":[
         "scripting"
