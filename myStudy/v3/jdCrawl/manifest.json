@@ -20,7 +20,9 @@
     },
     "permissions":[
         "tabs",
-        "scripting"
+        "scripting",
+        "storage",
+        "cookies"
     ],
     "content_scripts":[
         {
@@ -35,7 +37,7 @@
             "matches":[
                 "*://item.jd.com/*"
             ],
-            "js":["js/jquery-3.6.1.js","js/JD/item.js"],
+            "js":["js/jquery-3.6.1.js", "js/jszip.min.js", "js/FileSaver.min.js", "js/JD/item.js"],
             "run_at":"document_idle"
         },
         {
