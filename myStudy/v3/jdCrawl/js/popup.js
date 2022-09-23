@@ -54,3 +54,25 @@ $("#pc_all").click(e => {
     sendm("pc_all");
 
 })
+
+$("#pc_video").click(e => {
+
+    console.log('pc_video down')
+    sendm("pc_video");
+
+})
+
+
+$("#pc_comment_nopic").click(e => {
+
+    console.log('pc_comment_nopic down')
+    sendm("pc_comment_nopic");
+
+})
+
+$("#pc_comment_pic").click(e => {
+
+    console.log('pc_comment_nopic down')
+    sendm("pc_comment_nopic");
+
+})

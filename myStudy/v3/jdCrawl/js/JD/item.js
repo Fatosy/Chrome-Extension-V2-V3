@@ -4,6 +4,7 @@ console.log("---- item.js ------", chrome);
 
 /* --- fetch请求函数 start ---  */
 function packMsgReq(type, data) {
+
 	return {
 		uuid: function () {
 			return 'generate-uuid-4you-seem-professional'.replace(
@@ -75,6 +76,7 @@ http.request({
 }) */
 
 /* --- fetch请求函数 end ---  */
+
 
 const shopDiagnosis = (num) => {
 
@@ -172,7 +174,8 @@ const compareSbdUrl = (id1, id2, id3) => {
 /* --- 搜本店链接构造 end --- */
 
 
-// 获取主图链接
+/* --- PC端图片下载 start ---- */
+// 获取主图链接-PC
 const getMainImg = () => {
     let main_img_list = new Array();
     let main_tag_list = $('#spec-list ul li img');
@@ -189,7 +192,7 @@ const getMainImg = () => {
 }
 
 
-// 获取SKU图
+// 获取SKU图链接-PC
 const getSkuImg = () => {
     let sku_list = new Array();
     let sku_tag_img_list = $('#choose-attrs div div div a img');
@@ -212,7 +215,7 @@ const getSkuImg = () => {
 }
 
 
-/* 获取详情图 */
+/* 获取详情图-PC  start */
 
 // 获取mainSkuId
 const getmainSkuId = () => {
@@ -268,9 +271,10 @@ const downloadDtlImg = () => {
     });
 }
 
+/* 获取详情图-PC  end */
 
 
-// 下载全部图片
+// 下载全部图片-PC
 const downloadAllImg = () => {
 
     // 主图
@@ -330,7 +334,364 @@ const downloadAllImg = () => {
     });
 }
 
+/* --- PC端图片下载 end ---- */
 
+
+
+/* --- 移动端图片下载 start ---- */
+
+// 移动端-主图链接获取
+// 移动端获取图片方式更改，需要调整
+//index_url2 = "https://api.m.jd.com/mview/switch?appid=m_core&functionId=mview_switch&body={'datatype':'1','sku':'" + str(index_url) + "'}"
+const phoneMainPic = (skuid) =>{
+    let json_url = "https://api.m.jd.com/mview/switch?appid=m_core&functionId=mview_switch&body={'datatype':'1','sku':'" + skuid + "'}"
+    console.log(json_url)
+    http.get({url: json_url, headers: {"referer":"https://union.jd.com",'user-agent':'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'}}).then((response)=>{
+        contents = $.parseJSON(response.body);
+        console.log("phone main json : ", contents)
+        return contents;
+    }).then((res) => {
+        
+    });
+}
+
+/* --- 移动端图片下载 end ---- */
+
+
+/* --- PC端-视频下载 start --- */
+
+const getVideoUrl = () =>{
+    $('.video-icon').click();
+    let url = $('video source').attr('src');
+    return url != undefined ? url : undefined;
+}
+
+// 下载函数
+function daonloadVideo(url){
+    let name = '商品视频_' + Date.now()
+	fetch(url)
+	.then(res => res.blob())
+	.then(blob => {
+		const a = document.createElement("a");
+		const objectUrl = window.URL.createObjectURL(blob);
+		a.download = name;
+		a.href = objectUrl;
+		a.click();
+		window.URL.revokeObjectURL(objectUrl);
+		a.remove();
+	})
+}
+
+/* --- PC端-视频下载 start --- */
+
+
+
+/* --- 评价下载 start --- */
+
+// 无图评价下载
+//"https://club.jd.com/comment/skuProductPageComments.action?callback=fetchJSON_comment98&productId=" + str(skuId) + "&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&fold=1"
+const getCmtsNoPic = async (cnum) => {
+    
+    // 获取商品链接
+    let skuUrl = window.location.href;
+    // 获取商品ID
+    let skuId = getSkuId(skuUrl);
+
+    let json_url_list = new Array();
+    let total_page = 0;
+
+    let tpage1 = parseInt(cnum * 10 / 100); 
+    let tpage2 = cnum % 10;
+    if(cnum < 10){
+        total_page = 1;
+    }else{
+        if(tpage2 != 0){
+            total_page = tpage1 + 1;
+        }else{
+            total_page = tpage1;
+        }
+    }
+    
+    for(var i = 0; i < total_page; i++){
+        let jsonUrl = "https://club.jd.com/comment/skuProductPageComments.action?productId=" + skuId + "&score=0&sortType=5&page=" + i + "&pageSize=10&isShadowSku=0&fold=1"
+        json_url_list.push(jsonUrl)
+    }
+
+    let sumData = new Array();
+
+    for(var i = 0; i< total_page; i++){
+        
+        await http.get({url: json_url_list[i]}).then((response)=>{
+            let jsondata = $.parseJSON(response);
+            let nowPage = 0;
+            if (jsondata.csv != undefined ){
+                regs = jsondata.csv.match(/pageSize=.*?(\d+)/);
+                nowPage = regs != undefined ? regs[1] : 0;
+            }
+            // 获取最大页码
+            let maxPage = jsondata.maxPage;
+            // 初始化评价时间，默认获取当前时间
+            let nowTime = getMyDateTime();
+    
+            let cmt_list = jsondata.comments
+            for(var j = 0; j < cmt_list.length; j++){
+                // 初始化序号
+                let order = j + (nowPage-1) * 10;
+                if (order <= cnum){
+                    // 初始化每条评价的图片链接
+                    let imgUrls = new Array();
+                    // 初始化每条评价的视频链接
+                    let videoUrls = new Array();
+                    // 评价内容
+                    let content = cmt_list[j].content != undefined ? cmt_list[j].content : undefined;
+                    // 追加评价
+                    let after_content = cmt_list[j].afterUserComment != undefined ? cmt_list[j].afterUserComment : undefined;
+                    // 所有评价
+                    let all_content = "";
+                    if(content != undefined){
+                        all_content = content
+                    }
+                    if(after_content != undefined){
+                        all_content = all_content + ' ' + after_content
+                    }
+                    
+                    // 评价时间
+                    let ctime = cmt_list[j].creationTime != undefined ? cmt_list[j].creationTime : nowTime;
+                    // 判断是否是无图
+                    let isNoPic = cmt_list[j].images != undefined ? false : true;
+                    
+                    if(isNoPic == true){
+                        let c_obj = {"order":order, "time":ctime, "content":all_content, "after_content":after_content, "imgs":[], "videos":[]}
+                        sumData.push(c_obj)
+                    }
+                }
+            }
+        })
+    }
+
+    return sumData
+    
+}
+
+
+//console.log(document.cookie)
+
+
+
+//导出excel相关函数
+function sheet2blob(sheet, sheetName) {//将文件转换为二进制文件
+    sheetName = sheetName || 'sheet1';
+    var workbook = {
+        SheetNames: [sheetName],
+        Sheets: {}
+    };
+    workbook.Sheets[sheetName] = sheet;
+    // 生成excel的配置项
+    var wopts = {
+        bookType: 'xlsx', // 要生成的文件类型
+        bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
+        type: 'binary'
+    };
+    var wbout = XLSX.write(workbook, wopts);
+    var blob = new Blob([s2ab(wbout)], {type:"application/octet-stream"});
+    // 字符串转ArrayBuffer
+    function s2ab(s) {
+        var buf = new ArrayBuffer(s.length);
+        var view = new Uint8Array(buf);
+        for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+        return buf;
+    }
+    return blob;
+}
+
+/*************************************************************************************/
+function openDownloadXLSXDialog(url, saveName){//下载模板文件
+    if(typeof url == 'object' && url instanceof Blob){
+        url = URL.createObjectURL(url); // 创建blob地址
+    }
+    
+    var aLink = document.createElement('a');
+    aLink.href = url;
+    aLink.download = saveName || ''; // HTML5新增的属性，指定保存文件名，可以不要后缀，注意，file:///模式下不会生效
+    var event;
+    if(window.MouseEvent) event = new MouseEvent('click');
+    else{
+        event = document.createEvent('MouseEvents');
+        event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    }
+    aLink.dispatchEvent(event);
+
+}
+
+/*************************************************************************************/
+function teaModel(title, datas){//下载监考老师xlsx文件模板
+
+	var array = [['序号','评价内容']];
+    for (var i = 0; i < datas.length; i++){
+        a_obj = [datas[i].order, datas[i].content]
+        array.push(a_obj)
+    }
+	var sheet = XLSX.utils.aoa_to_sheet(array);
+	var blob = sheet2blob(sheet, '无图评价');
+    file_name = "无图评价_" + title + '.xlsx'
+	openDownloadXLSXDialog(blob, file_name);
+}
+
+
+/* --- 评价下载 end --- */
+
+
+// 获取时间格式化YYYY-MM-DD HH:MM:SS
+const getMyDateTime = () => {
+    let myDate = new Date();
+    let year = myDate.getFullYear();
+    let month = myDate.getMonth();
+    let day = myDate.getDate();
+    let hour = myDate.getHours();
+    let minute = myDate.getMinutes();
+    let second = myDate.getSeconds(); 
+    month = month >= 10 ? month : '0' + month;
+    day = day >= 10 ? day : '0' + day;
+    hour = hour >= 10 ? hour : '0' + hour;
+    minute = minute >= 10 ? minute : '0' + minute;
+    second = second >= 10 ? second : '0' + second;
+    let mydate = year + '-' + month + '-' + day
+    let mytime = hour + ':' + minute + ':' + second
+    let result = mydate + ' ' + mytime
+    return result
+}
+
+
+const gbk2utf8 = () => {  
+    this.Dig2Dec=function(s){  
+          var retV = 0;  
+          if(s.length == 4){  
+          for(var i = 0; i < 4; i ++){  
+              retV += eval(s.charAt(i)) * Math.pow(2, 3 - i);  
+          }  
+          return retV;  
+          }  
+          return -1;  
+    }   
+    this.Hex2Utf8=function(s){  
+         var retS = "";  
+         var tempS = "";  
+         var ss = "";  
+         if(s.length == 16){  
+         tempS = "1110" + s.substring(0, 4);  
+         tempS += "10" + s.substring(4, 10);   
+         tempS += "10" + s.substring(10,16);   
+         var sss = "0123456789ABCDEF";  
+         for(var i = 0; i < 3; i ++){  
+            retS += "%";  
+            ss = tempS.substring(i * 8, (eval(i)+1)*8);  
+            retS += sss.charAt(this.Dig2Dec(ss.substring(0,4)));  
+            retS += sss.charAt(this.Dig2Dec(ss.substring(4,8)));  
+         }  
+         return retS;  
+         }  
+         return "";  
+    }   
+    this.Dec2Dig=function(n1){  
+          var s = "";  
+          var n2 = 0;  
+          for(var i = 0; i < 4; i++){  
+         n2 = Math.pow(2,3 - i);  
+         if(n1 >= n2){  
+            s += '1';  
+            n1 = n1 - n2;  
+          }  
+         else  
+          s += '0';  
+          }  
+          return s;        
+    }  
+  
+    this.Str2Hex=function(s){  
+          var c = "";  
+          var n;  
+          var ss = "0123456789ABCDEF";  
+          var digS = "";  
+          for(var i = 0; i < s.length; i ++){  
+         c = s.charAt(i);  
+         n = ss.indexOf(c);  
+         digS += this.Dec2Dig(eval(n));  
+          }  
+          return digS;  
+    }  
+    this.Gb2312ToUtf8=function(s1){  
+        var s = escape(s1);  
+        var sa = s.split("%");  
+        var retV ="";  
+        if(sa[0] != ""){  
+          retV = sa[0];  
+        }  
+        for(var i = 1; i < sa.length; i ++){  
+          if(sa[i].substring(0,1) == "u"){  
+        retV += this.Hex2Utf8(this.Str2Hex(sa[i].substring(1,5)));  
+       if(sa[i].length){  
+        retV += sa[i].substring(5);  
+       }  
+          }  
+          else{  
+         retV += unescape("%" + sa[i]);  
+       if(sa[i].length){  
+        retV += sa[i].substring(5);  
+       }  
+       }  
+        }  
+        return retV;  
+    }  
+    this.Utf8ToGb2312=function(str1){  
+        var substr = "";  
+        var a = "";  
+        var b = "";  
+        var c = "";  
+        var i = -1;  
+        i = str1.indexOf("%");  
+        if(i==-1){  
+          return str1;  
+        }  
+        while(i!= -1){  
+        if(i<3){  
+            substr = substr + str1.substr(0,i-1);  
+            str1 = str1.substr(i+1,str1.length-i);  
+            a = str1.substr(0,2);  
+            str1 = str1.substr(2,str1.length - 2);  
+            if(parseInt("0x" + a) & 0x80 == 0){  
+              substr = substr + String.fromCharCode(parseInt("0x" + a));  
+            }  
+            else if(parseInt("0x" + a) & 0xE0 == 0xC0){ //two byte  
+                b = str1.substr(1,2);  
+                str1 = str1.substr(3,str1.length - 3);  
+                var widechar = (parseInt("0x" + a) & 0x1F) << 6;  
+                widechar = widechar | (parseInt("0x" + b) & 0x3F);  
+                substr = substr + String.fromCharCode(widechar);  
+            }  
+            else{  
+                b = str1.substr(1,2);  
+                str1 = str1.substr(3,str1.length - 3);  
+                c = str1.substr(1,2);  
+                str1 = str1.substr(3,str1.length - 3);  
+                var widechar = (parseInt("0x" + a) & 0x0F) << 12;  
+                widechar = widechar | ((parseInt("0x" + b) & 0x3F) << 6);  
+                widechar = widechar | (parseInt("0x" + c) & 0x3F);  
+                substr = substr + String.fromCharCode(widechar);  
+            }  
+         }  
+         else {  
+          substr = substr + str1.substring(0,i);  
+          str1= str1.substring(i);  
+         }  
+              i = str1.indexOf("%");  
+        }  
+  
+        return substr+str1;  
+    }  
+}  
+
+
+/* --- 图片打包下载，传入图片链接数组, 图片名称， 打包名称 start --- */
 
 // 单张图片下载功能
 function downloadIamge(imgsrc, name) {//下载图片地址和图片名
@@ -361,9 +722,6 @@ function downloadIamge(imgsrc, name) {//下载图片地址和图片名
     };
     image.src = imgsrc;
 }
-
-
-/* --- 图片打包下载，传入图片链接数组, 图片名称， 打包名称 start --- */
 
 function packageImages(imgsSrc, imgName, zipName) {
 
@@ -475,6 +833,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }else if(rt == "pc_all"){
             downloadAllImg()
             sendResponse('item.js pc_all get ok')
+        }else if(rt == "pc_video"){
+            let video_url = getVideoUrl()
+            daonloadVideo(video_url)
+            sendResponse('item.js pc_video get ok')
+        }else if(rt == "pc_comment_nopic"){
+            getCmtsNoPic(20).then((res) => {
+                let skuTitle = $('.sku-name').text().trim();
+                teaModel(skuTitle, res);
+            });
+            sendResponse('item.js pc_comment_nopic get ok')
+        }else if(rt == "pc_comment_pic"){
+
+            sendResponse('item.js pc_comment_pic get ok')
         }
     }
     

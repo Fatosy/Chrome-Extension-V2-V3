@@ -31,6 +31,9 @@ export const http = {
 				_data = formData;
 			} else {
 				requestOptions.headers["Content-type"] = "application/json;charset=utf-8";
+				if(requestOptions.headers.typeAA != undefined){
+					requestOptions.headers["Content-type"] = requestOptions.headers["typeAA"]
+				}
 				_data = JSON.stringify(requestOptions.data);
 			}
 		}
@@ -49,11 +52,12 @@ export const http = {
 			fetchOptions.body = _data;
 		}
  
-		return fetch(_url, fetchOptions);
+		return fetch(_url, fetchOptions)
 	},
  
 	get: function (options) {
 		options.method = "GET";
+		
 		return this.request(options);
 	},
  

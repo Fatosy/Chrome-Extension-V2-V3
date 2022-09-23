@@ -51,7 +51,7 @@ function packMsgRep(state, data, message) {
 }
  
 async function parseHttpResponse(response) {
-
+	console.log("parseHttpResponse: ",response)
 	if (response == null) {
 		return {
 			status: -2,
@@ -72,6 +72,8 @@ async function parseHttpResponse(response) {
 		};
 	}
 }
+
+
  
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 	if(message.type != "imgdownload"){
@@ -92,12 +94,30 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 					break;
 				}
 				case 'FetchGet': {
-					http.get(message.data).then(response => {
-						resolve(parseHttpResponse(response));
-					}).catch(error => {
-						reject(parseHttpResponse(error));
-					});
-					break;
+					console.log('FetchGet1: ', message.data)
+					if(message.data.url.indexOf('club.jd.com/') > -1){
+						http.get(message.data).then(res => res.arrayBuffer())
+						.then(buffer => {
+						  const decoder = new TextDecoder("gbk");
+						  const text = decoder.decode(buffer);
+						  console.log('FetchGet2: ', text)
+						  return text
+						}).then(response => {
+							console.log('FetchGet3: ', response)
+							resolve(response);
+						}).catch(error => {
+							reject(parseHttpResponse(error));
+						});
+						break;
+					}else{
+						http.get(message.data).then(response => {
+							resolve(parseHttpResponse(response));
+						}).catch(error => {
+							reject(parseHttpResponse(error));
+						});
+						break;
+					}
+					
 				}
 				case 'FetchPost': {
 					http.post(message.data).then(response => {
