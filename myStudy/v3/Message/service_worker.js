@@ -17,8 +17,23 @@ function getCurrentTabId(callback){
     });
 } */
 
+async function getCurrentTabId() {
+    let queryOptions = { active: true, currentWindow: true };
+    // `tab` will either be a `tabs.Tab` instance or `undefined`.
+    let [tab] = await chrome.tabs.query(queryOptions);
+    return tab;
+}
+
+
+chrome.runtime.sendMessage("back send message to content!", (res) => {
+    console.log("back : content return message :", res)
+});
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log("service-worker get Message : ", request)
-    sendResponse('shoudao')
+    console.log("back get Message : ", request)
+    sendResponse("back get Message")
+    console.log("---- back to content ----")
+    chrome.runtime.sendMessage(request, "back send message to content!", (res) => {
+        console.log("back : content return message :", res)
+    });
 });
